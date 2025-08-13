@@ -1,0 +1,31 @@
+export const asyncHandlar = (fn) => {
+    return async (req, res, next) => {
+        await fn(req, res, next).catch((error) => {
+            return next(error, { cause: 500 });
+        });
+    };
+};
+
+export const globalErrorHandling = async (error, req, res, next) => {
+    return res.status(error.cause || 400).json({
+        error,
+        message: error.message,
+        stack: error.stack,
+    });
+};
+
+export const successResponse = async ({
+    res,
+    data = {},
+    message = "Done",
+    status = 200,
+} = {}) => {
+    if (!res) {
+        // console.log("Missing response in successResponse?");
+        return;
+    }
+    return res.status(status).json({
+        message,
+        data,
+    });
+};
