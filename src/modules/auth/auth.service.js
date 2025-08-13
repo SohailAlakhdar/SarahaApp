@@ -52,6 +52,13 @@ export const signup = asyncHandlar(async (req, res, next) => {
         plaintext: otp,
         saltRound: parseInt(process.env.SALT) || 12,
     });
+    emailEventEmitter.emit("ConfirmationEmail", {
+        to: email,
+        // to: "sohailalakhdar1@gmail.com",
+        otp: otp,
+        subject: "Verify your Saraha App account",
+    });
+
     const [user] = await DBService.create({
         model: UserModel,
         data: [
@@ -69,13 +76,6 @@ export const signup = asyncHandlar(async (req, res, next) => {
         ],
         options: {},
     });
-    emailEventEmitter.emit("ConfirmationEmail", {
-        to: email,
-        // to: "sohailalakhdar1@gmail.com",
-        otp: otp,
-        subject: "Verify your Saraha App account",
-    });
-
     return successResponse({
         res,
         status: 201,
@@ -189,7 +189,7 @@ export const forgotPassword = asyncHandlar(async (req, res, next) => {
     });
 });
 
-    // reset password -------------------
+// reset password -------------------
 export const resetPassword = asyncHandlar(async (req, res, next) => {
     const { email, otp, password, confirmPassword } = req.body;
     if (password !== confirmPassword) {
