@@ -109,7 +109,7 @@ export const confirmEmail = asyncHandlar(async (req, res, next) => {
     ) {
         return next(new Error("Invalid OTP", { cause: 404 }));
     }
-    const upddatedUser = await DBService.updateOne({
+    const updatedUser = await DBService.updateOne({
         model: UserModel,
         filter: { email, provider: providerEnum.local },
         update: {
@@ -119,13 +119,13 @@ export const confirmEmail = asyncHandlar(async (req, res, next) => {
         },
         options: {},
     });
-    return upddatedUser.modifiedCount
+    return updatedUser.modifiedCount
         ? successResponse({
-              res,
-              status: 200,
-              data: { upddatedUser },
-              message: "done",
-          })
+            res,
+            status: 200,
+            data: { updatedUser },
+            message: "done",
+        })
         : next(new Error("Failed to confirm email", { cause: 500 }));
 });
 

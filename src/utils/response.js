@@ -1,11 +1,14 @@
 export const asyncHandlar = (fn) => {
     return async (req, res, next) => {
-        await fn(req, res, next).catch((error) => {
-            return next(error, { cause: 500 });
-        });
+        try {
+            await fn(req, res, next);
+        } catch (error) {
+            // attach cause if needed
+            error.statusCode = error.statusCode || 500;
+            return next(error);
+        }
     };
 };
-
 export const globalErrorHandling = async (error, req, res, next) => {
     return res.status(error.cause || 400).json({
         error,
