@@ -1,11 +1,12 @@
 export const asyncHandlar = (fn) => {
-    return async (req, res, next) => {
+    return async (req, res) => {
         try {
-            await fn(req, res, next);
+            await fn(req, res);
         } catch (error) {
-            // attach cause if needed
-            error.statusCode = error.statusCode || 500;
-            return next(error);
+            res.status(error.statusCode || 500).json({
+                success: false,
+                message: error.message || "Internal Server Error",
+            });
         }
     };
 };
